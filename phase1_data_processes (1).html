@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase 1 Data Processes — Teacher Time Analysis &amp; Supports</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;600&family=DM+Sans:wght@400;500;600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --blue: #1A5CA8;
+    --blue-dark: #0F3D75;
+    --blue-light: #E8F1FB;
+    --green: #2A6B3A;
+    --green-mid: #3D8B50;
+    --green-light: #EAF3EC;
+    --green-dark: #1A4225;
+    --purple: #603C96;
+    --purple-light: #EDE7F6;
+    --gray-100: #F5F4F0;
+    --gray-200: #E8E6DF;
+    --gray-400: #B8B5AC;
+    --gray-600: #6B6860;
+    --gray-800: #2E2D2A;
+    --white: #FFFFFF;
+    --dqt: #1A5CA8; --dqt-bg: #E8F1FB;
+    --maya: #2A6B3A; --maya-bg: #EAF3EC;
+    --tr: #7B4F00;  --tr-bg: #FEF3E2;
+  }
+
+  body { font-family: 'DM Sans', sans-serif; background: var(--gray-100); padding: 36px 28px 64px; color: var(--gray-800); }
+  .page { max-width: 880px; margin: 0 auto; }
+
+  /* Header */
+  .doc-label { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue); margin-bottom: 8px; }
+  h1 { font-family: 'Lora', Georgia, serif; font-size: 24px; font-weight: 600; color: var(--blue-dark); line-height: 1.3; margin-bottom: 8px; }
+  .doc-subtitle { font-size: 13.5px; color: var(--gray-600); line-height: 1.6; margin-bottom: 24px; max-width: 560px; }
+
+  /* Definitions */
+  .definitions {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-left: 4px solid var(--purple);
+    border-radius: 8px;
+    padding: 16px 20px 18px;
+    margin-bottom: 24px;
+  }
+  .definitions-label { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--purple); margin-bottom: 12px; }
+  .def-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px 20px; }
+  .def-item {}
+  .def-term { font-size: 12px; font-weight: 600; color: var(--gray-800); margin-bottom: 2px; }
+  .def-desc { font-size: 12px; color: var(--gray-600); line-height: 1.5; }
+
+  /* Legend */
+  .legend { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; padding: 12px 16px; background: var(--white); border: 1px solid var(--gray-200); border-radius: 8px; align-items: center; }
+  .legend-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray-600); margin-right: 4px; }
+  .badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 500; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+  .badge-dqt  { background: var(--dqt-bg);  color: var(--dqt);  }
+  .badge-maya { background: var(--maya-bg); color: var(--maya); }
+  .badge-tr   { background: var(--tr-bg);   color: var(--tr);   }
+
+  /* Accordion */
+  .accordion { display: flex; flex-direction: column; gap: 10px; }
+  .acc-item { background: var(--white); border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; }
+  .acc-trigger { width: 100%; background: none; border: none; cursor: pointer; padding: 18px 22px; display: flex; align-items: center; gap: 14px; text-align: left; }
+  .acc-trigger:hover { background: var(--gray-100); }
+  .acc-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; background: var(--blue-light); color: var(--blue-dark); }
+  .acc-title-group { flex: 1; }
+  .acc-title { font-family: 'Lora', Georgia, serif; font-size: 16px; font-weight: 600; color: var(--blue-dark); display: block; margin-bottom: 2px; }
+  .acc-guide { font-size: 12px; color: var(--gray-600); }
+  .acc-chevron { font-size: 18px; color: var(--gray-400); transition: transform 0.2s ease; flex-shrink: 0; }
+  .acc-item.open .acc-chevron { transform: rotate(180deg); }
+  .acc-body { display: none; border-top: 1px solid var(--gray-200); }
+  .acc-item.open .acc-body { display: block; }
+
+  /* Steps */
+  .steps { display: flex; flex-direction: column; }
+  .step { border-bottom: 1px solid var(--gray-200); padding: 18px 22px; }
+  .step:last-child { border-bottom: none; }
+  .step-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .step-num { width: 22px; height: 22px; border-radius: 50%; background: var(--blue-light); color: var(--blue-dark); font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .step-title { font-size: 13.5px; font-weight: 600; color: var(--gray-800); flex: 1; }
+  .step-body { padding-left: 32px; }
+  .step-lead { font-size: 12.5px; color: var(--gray-600); margin-bottom: 10px; line-height: 1.5; }
+
+  .resource-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+  .resource-list li { display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; color: var(--gray-800); line-height: 1.4; }
+  .resource-list li i { font-size: 14px; color: var(--gray-400); flex-shrink: 0; margin-top: 1px; }
+
+  /* Hub pill */
+  .hub-pill { display: inline-flex; align-items: center; gap: 3px; font-size: 10.5px; font-weight: 500; padding: 1px 7px; border-radius: 20px; background: #EEF2FA; color: #3A5FA0; margin-left: 4px; vertical-align: middle; white-space: nowrap; }
+
+  /* Data use step — distinct styling */
+  .step.step-use { background: var(--green-light); border-bottom: none; }
+  .step.step-use .step-num { background: var(--green-light); color: var(--green-dark); border: 1.5px solid var(--green-mid); }
+  .step.step-use .step-title { color: var(--green-dark); }
+  .use-destination { font-size: 10px; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: var(--green-dark); margin-bottom: 8px; opacity: 0.8; }
+  .use-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+  .use-list li { display: flex; align-items: flex-start; gap: 7px; font-size: 12.5px; color: var(--gray-800); line-height: 1.45; }
+  .use-list li::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--green-mid); flex-shrink: 0; margin-top: 5px; opacity: 0.7; }
+  .use-note { font-size: 12.5px; color: var(--gray-600); line-height: 1.6; }
+
+  /* Footer */
+  .footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--gray-200); }
+  .footer-org { font-size: 12px; font-weight: 500; color: var(--blue-dark); }
+  .footer-sub { font-size: 12px; color: var(--gray-600); margin-top: 2px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="doc-label">Teacher Time Analysis &amp; Supports &mdash; Phase 1</div>
+  <h1>Data Collection &amp; Analysis Processes</h1>
+  <p class="doc-subtitle">This document outlines the step-by-step data collection, cleaning, synthesis, and analysis process for each data collection tool used during Phase 1, along with roles, resources, and how the data is used.</p>
+
+  <!-- Definitions -->
+  <div class="definitions">
+    <div class="definitions-label">Key definitions</div>
+    <div class="def-grid">
+      <div class="def-item">
+        <div class="def-term">Data collection</div>
+        <div class="def-desc">The process of gathering and measuring information from various sources.</div>
+      </div>
+      <div class="def-item">
+        <div class="def-term">Data cleaning</div>
+        <div class="def-desc">The process of identifying and correcting or removing inaccurate, incomplete, or duplicate data from a dataset.</div>
+      </div>
+      <div class="def-item">
+        <div class="def-term">Data synthesis</div>
+        <div class="def-desc">The process of combining information from multiple sources.</div>
+      </div>
+      <div class="def-item">
+        <div class="def-term">Data analysis</div>
+        <div class="def-desc">The practice of systematically inspecting raw data to uncover patterns, draw conclusions, and inform decision-making.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <span class="legend-label">Responsible party:</span>
+    <span class="badge badge-dqt">District quality team (DQIT)</span>
+    <span class="badge badge-tr">Teacher-researchers</span>
+    <span class="badge badge-maya">MAYA team</span>
+  </div>
+
+  <div class="accordion">
+
+    <!-- ── STAFF SURVEY ── -->
+    <div class="acc-item open" id="acc-survey">
+      <button class="acc-trigger" onclick="toggle('acc-survey')" aria-expanded="true">
+        <div class="acc-icon"><i class="ti ti-clipboard-list" aria-hidden="true"></i></div>
+        <div class="acc-title-group">
+          <span class="acc-title">Staff Survey</span>
+          <span class="acc-guide">Staff Survey Data Collection Guide</span>
+        </div>
+        <i class="ti ti-chevron-down acc-chevron" aria-hidden="true"></i>
+      </button>
+      <div class="acc-body">
+        <div class="steps">
+
+          <div class="step">
+            <div class="step-header">
+              <div class="step-num">1</div>
+              <div class="step-title">Data collection</div>
+              <span class="badge badge-dqt">District quality team (DQIT)</span>
+            </div>
+            <div class="step-body">
+              <ul class="resource-list">
+                <li><i class="ti ti-file-text" aria-hidden="true"></i>Survey <span class="hub-pill"><i class="ti ti-database" aria-hidden="true" style="font-size:10px"></i> responses stored in hub</span></li>
+                <li><i class="ti ti-file-text" aria-hidden="true"></i>One-pager</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header">
+              <div class="step-num">2</div>
+              <div class="step-title">Data cleaning</div>
+              <span class="badge badge-maya">MAYA team</span>
+            </div>
+            <div class="step-body">
+              <p class="step-lead">Completed by MAYA team.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header">
+              <div class="step-num">3</div>
+              <div class="step-title">District data synthesis</div>
+              <span class="badge badge-maya">MAYA team</span>
+            </div>
+            <div class="step-body">
+              <p class="step-lead">MAYA completes and shares with DQIT.</p>
+              <ul class="resource-list">
+                <li><i class="ti ti-file-spreadsheet" aria-hidden="true"></i>Staff survey analysis template</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header">
+              <div class="step-num">4</div>
+              <div class="step-title">District data analysis</div>
+              <span class="badge badge-tr">Teacher-researchers</span>
+            </div>
+            <div class="step-body">
+              <p class="step-lead">Led by teacher-researchers working through collaboratively.</p>
+              <ul class="resource-list">
+                <li><i class="ti ti-file-text" aria-hidden="true"></i>District data analysis protocol <span class="hub-pill"><i class="ti ti-database" aria-hidden="true" style="font-size:10px"></i> upload to hub</span></li>
+                <li><i class="ti ti-calendar" aria-hidden="true"></i>Template meeting agenda</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step step-use">
+            <div class="step-header">
+              <div class="step-num">&#10003;</div>
+              <div class="step-title">How this data is used</div>
+            </div>
+            <div class="step-body">
+              <div class="use-destination">Needs assessment sections</div>
+              <ul class="use-list">
+                <li>Time allocation by activity</li>
+                <li>Top challenges teachers reported facing in managing their time</li>
+                <li>Average number of hours worked outside of regular school hours per week</li>
+                <li>Top tasks teachers reported working on outside of regular school hours</li>
+                <li>Work-life balance questions</li>
+                <li>Teacher workload questions</li>
+                <li>Teacher satisfaction questions</li>
+                <li>Top three tasks teacher aides and student teachers support during the school day</li>
+                <li>How student teachers and teacher aides support lesson delivery</li>
+                <li>Teacher voice insights</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TIME AUDIT ── -->
+    <div class="acc-item" id="acc-time">
+      <button class="acc-trigger" onclick="toggle('acc-time')" aria-expanded="false">
+        <div class="acc-icon"><i class="ti ti-clock" aria-hidden="true"></i></div>
+        <div class="acc-title-group">
+          <span class="acc-title">Time Audit</span>
+          <span class="acc-guide">Time Audit Data Collection Guide</span>
+        </div>
+        <i class="ti ti-chevron-down acc-chevron" aria-hidden="true"></i>
+      </button>
+      <div class="acc-body">
+        <div class="steps">
+
+          <div class="step">
+            <div class="step-header">
+              <div class="step-num">1</div>
+              <div class="step-title">Data collection</div>
+              <span class="badge badge-tr">Teacher-researchers</span>
+            </div>
+            <div class="step-body">
+              <p class="step-lead">Led by teacher-researchers.</p>
+              <ul class="resource-list">
+                <li><i class="ti ti-file-text" aria-hidden="true"></i>Instructional Observation Protocol <span class="hub-pill"><i class="ti ti-database" aria-hidden="true" style="font-size:10px"></i> each uploaded to hub</span></li>
+                <li><i class="ti ti-file-text" aria-hidden="true"></i>Planning Observation Protocol <span class="hub-pill"><i class="ti ti-database" aria-hidden="true" style="font-size:10px"></i> each uploaded to hub</span></li>
+                <li><i class="ti ti-clock" aria-hidden="true"></i>Teacher Time Diary <span class="hub-pill"><i class="ti ti-database" aria-hidden="true" style="font-size:10px"></i> each uploaded to hub</span></li>
+                <li><i class="ti ti-calendar" aria-hidden="true"></i>Template Teacher Time Diary sign-up form</li>
+                <li><i class="ti ti-file-description" aria-hidden="true"></i>Time Audit Informed Consent Template</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header">
+              <div class="step-num">2</div>
+              <div class="step-title">Data cleaning</div>
+              <span class="badge badge-tr">Teacher-researchers</span>
+            </div>
+            <div class="step-body">
+              <p class="step-lead">Completed by teacher-researchers.</p>
+              <ul class="resource-list">
+                <li><i class="ti ti-player-play" aria-hidden="true"></i>Video walkthrough of time diary cleaning process</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header">
+              <div class="step-num">3</div>
+              <div class="step-title">Campus data summary</div>
+              <span class="badge badge-tr">Teacher-researchers</span>
+            </div>
+            <div class="step-body">
+              <p class="step-lead">Led by teacher-researchers.</p>
+              <ul class="resource-list">
+                <li><i class="ti ti-file-spreadsheet" aria-hidden="true"></i>Campus Observation Data Summary <span class="hub-pill"><i class="ti ti-database" aria-hidden="true" style="font-size:10px"></i> uploaded to hub</span></li>
+                <li><i class="ti ti-file-spreadsheet" aria-hidden="true"></i>Campus Time Diary Summary Template <span class="hub-pill"><i class="ti ti-database" aria-hidden="true" style="font-size:10px"></i> uploaded to hub</span></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header">
+              <div class="step-num">4</div>
+              <div class="step-title">District data synthesis</div>
+              <span class="badge badge-maya">MAYA team</span>
+            </div>
+            <div class="step-body">
+              <p class="step-lead">MAYA completes and shares with teacher-researchers.</p>
+              <ul class="resource-list">
+                <li><i class="ti ti-file-spreadsheet" aria-hidden="true"></i>District Time Data Synthesis Template</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header">
+              <div class="step-num">5</div>
+              <div class="step-title">District data analysis</div>
+              <span class="badge badge-tr">Teacher-researchers</span>
+            </div>
+            <div class="step-body">
+              <p class="step-lead">Led by teacher-researchers working through collaboratively.</p>
+              <ul class="resource-list">
+                <li><i class="ti ti-file-text" aria-hidden="true"></i>District Data Analysis Protocol &mdash; Time Audit Data <span class="hub-pill"><i class="ti ti-database" aria-hidden="true" style="font-size:10px"></i> upload to hub</span></li>
+                <li><i class="ti ti-calendar" aria-hidden="true"></i>Template Meeting Agenda</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step step-use">
+            <div class="step-header">
+              <div class="step-num">&#10003;</div>
+              <div class="step-title">How this data is used</div>
+            </div>
+            <div class="step-body">
+              <div class="use-destination">Needs assessment sections</div>
+              <ul class="use-list">
+                <li>Average hours worked by teachers</li>
+                <li>Total time by activity over the week</li>
+                <li>Tasks aligned to required teacher duties</li>
+                <li>Time-related challenges section (observations)</li>
+                <li>Planning time observed spent on the goals of the planning time &mdash; aligned time (observations)</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FOCUS GROUPS ── -->
+    <div class="acc-item" id="acc-fg">
+      <button class="acc-trigger" onclick="toggle('acc-fg')" aria-expanded="false">
+        <div class="acc-icon"><i class="ti ti-users" aria-hidden="true"></i></div>
+        <div class="acc-title-group">
+          <span class="acc-title">Focus Groups</span>
+          <span class="acc-guide">Focus Group Data Collection Guide</span>
+        </div>
+        <i class="ti ti-chevron-down acc-chevron" aria-hidden="true"></i>
+      </button>
+      <div class="acc-body">
+        <div class="steps">
+
+          <div class="step">
+            <div class="step-header">
+              <div class="step-num">1</div>
+              <div class="step-title">Data collection</div>
+              <span class="badge badge-tr">Teacher-researchers</span>
+            </div>
+            <div class="step-body">
+              <p class="step-lead">Led by teacher-researchers.</p>
+              <ul class="resource-list">
+                <li><i class="ti ti-file-text" aria-hidden="true"></i>Campus Focus Group Protocol</li>
+                <li><i class="ti ti-file-description" aria-hidden="true"></i>Informed Consent</li>
+                <li><i class="ti ti-calendar" aria-hidden="true"></i>Template sign-up form</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header">
+              <div class="step-num">2</div>
+              <div class="step-title">Data cleaning</div>
+              <span class="badge badge-tr">Teacher-researchers</span>
+            </div>
+            <div class="step-body">
+              <p class="step-lead">Led by teacher-researchers.</p>
+              <ul class="resource-list">
+                <li><i class="ti ti-file-text" aria-hidden="true"></i>Focus Group Transcript, Notes, &amp; Summary Template</li>
+                <li><i class="ti ti-player-play" aria-hidden="true"></i>Walkthrough video</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header">
+              <div class="step-num">3</div>
+              <div class="step-title">Campus data summary</div>
+              <span class="badge badge-tr">Teacher-researchers</span>
+            </div>
+            <div class="step-body">
+              <p class="step-lead">Led by teacher-researchers.</p>
+              <ul class="resource-list">
+                <li><i class="ti ti-file-spreadsheet" aria-hidden="true"></i>Campus Focus Group Summary Template <span class="hub-pill"><i class="ti ti-database" aria-hidden="true" style="font-size:10px"></i> uploaded to hub</span></li>
+                <li><i class="ti ti-file-spreadsheet" aria-hidden="true"></i>Campus Focus Group Summary 2026_EXAMPLE</li>
+                <li><i class="ti ti-player-play" aria-hidden="true"></i>Walkthrough video</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header">
+              <div class="step-num">4</div>
+              <div class="step-title">District data synthesis</div>
+              <span class="badge badge-maya">MAYA team</span>
+            </div>
+            <div class="step-body">
+              <p class="step-lead">MAYA completes and shares with teacher-researchers.</p>
+              <ul class="resource-list">
+                <li><i class="ti ti-file-spreadsheet" aria-hidden="true"></i>District Focus Group Synthesis Template</li>
+                <li><i class="ti ti-file-spreadsheet" aria-hidden="true"></i>District Focus Group Synthesis 2026_EXAMPLE</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header">
+              <div class="step-num">5</div>
+              <div class="step-title">District data analysis</div>
+              <span class="badge badge-tr">Teacher-researchers</span>
+            </div>
+            <div class="step-body">
+              <p class="step-lead">Led by teacher-researchers working through collaboratively.</p>
+              <ul class="resource-list">
+                <li><i class="ti ti-file-text" aria-hidden="true"></i>District Data Analysis Protocol &mdash; Focus Groups <span class="hub-pill"><i class="ti ti-database" aria-hidden="true" style="font-size:10px"></i> upload to hub</span></li>
+                <li><i class="ti ti-calendar" aria-hidden="true"></i>Template Meeting Agenda</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step step-use">
+            <div class="step-header">
+              <div class="step-num">&#10003;</div>
+              <div class="step-title">How this data is used</div>
+            </div>
+            <div class="step-body">
+              <div class="use-destination">Needs assessment sections</div>
+              <ul class="use-list">
+                <li>Time use and allocation section</li>
+                <li>Time-related challenges section</li>
+                <li>Well-being and work-life balance section</li>
+                <li>Strategies utilized to manage time section</li>
+                <li>Teacher voice insights</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ── BASELINE DATA ── -->
+    <div class="acc-item" id="acc-baseline">
+      <button class="acc-trigger" onclick="toggle('acc-baseline')" aria-expanded="false">
+        <div class="acc-icon"><i class="ti ti-chart-bar" aria-hidden="true"></i></div>
+        <div class="acc-title-group">
+          <span class="acc-title">Baseline Data</span>
+          <span class="acc-guide">Baseline Data Collection Guide</span>
+        </div>
+        <i class="ti ti-chevron-down acc-chevron" aria-hidden="true"></i>
+      </button>
+      <div class="acc-body">
+        <div class="steps">
+
+          <div class="step">
+            <div class="step-header">
+              <div class="step-num">1</div>
+              <div class="step-title">Data collection</div>
+              <span class="badge badge-tr">Teacher-researchers</span>
+            </div>
+            <div class="step-body">
+              <p class="step-lead">Led by teacher-researchers.</p>
+              <ul class="resource-list">
+                <li><i class="ti ti-file-spreadsheet" aria-hidden="true"></i>Baseline data collection tool <span class="hub-pill"><i class="ti ti-database" aria-hidden="true" style="font-size:10px"></i> upload to hub</span></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header">
+              <div class="step-num">2</div>
+              <div class="step-title">District data analysis</div>
+              <span class="badge badge-dqt">District quality team (DQIT)</span>
+            </div>
+            <div class="step-body">
+              <p class="step-lead">Led by DQIT working through collaboratively.</p>
+              <ul class="resource-list">
+                <li><i class="ti ti-file-text" aria-hidden="true"></i>District DAP <span class="hub-pill"><i class="ti ti-database" aria-hidden="true" style="font-size:10px"></i> upload to hub</span></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step step-use">
+            <div class="step-header">
+              <div class="step-num">&#10003;</div>
+              <div class="step-title">How this data is used</div>
+            </div>
+            <div class="step-body">
+              <p class="use-note">Used to set a baseline understanding of where the district is currently performing and to measure progress after implementation years.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end accordion -->
+
+  <div class="footer">
+    <div class="footer-org">Texas Teacher Time Analysis &amp; Supports Project &mdash; Phase 1 Reference</div>
+    <div class="footer-sub">District quality team &bull; Teacher-researchers &bull; MAYA team</div>
+  </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<script>
+function toggle(id) {
+  const item = document.getElementById(id);
+  const isOpen = item.classList.contains('open');
+  item.classList.toggle('open', !isOpen);
+  item.querySelector('.acc-trigger').setAttribute('aria-expanded', !isOpen);
+}
+</script>
+</body>
+</html>
