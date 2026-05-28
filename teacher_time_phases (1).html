@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teacher Time Analysis &amp; Supports: Project Phases</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;600&family=DM+Sans:wght@400;500;600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --blue: #1A5CA8;
+    --blue-dark: #0F3D75;
+    --blue-light: #E8F1FB;
+    --blue-border: #b5d0ef;
+    --green: #2A6B3A;
+    --green-mid: #3D8B50;
+    --green-light: #EAF3EC;
+    --green-border: #b0d9b8;
+    --green-dark: #1A4225;
+    --green-dark-light: #E4EFE6;
+    --green-dark-border: #9dc4a5;
+    --gray-100: #F5F4F0;
+    --gray-200: #E8E6DF;
+    --gray-300: #D4D1C8;
+    --gray-600: #6B6860;
+    --gray-800: #2E2D2A;
+    --white: #FFFFFF;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--gray-100);
+    padding: 40px 32px 60px;
+    min-height: 100vh;
+    color: var(--gray-800);
+  }
+
+  .page {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .header { margin-bottom: 40px; }
+
+  .project-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-family: 'Lora', Georgia, serif;
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--blue-dark);
+    line-height: 1.3;
+    max-width: 620px;
+  }
+
+  .subtitle {
+    margin-top: 10px;
+    font-size: 14px;
+    color: var(--gray-600);
+    line-height: 1.6;
+    max-width: 580px;
+  }
+
+  /* Timeline */
+  .timeline-wrapper {
+    position: relative;
+    padding-top: 20px;
+  }
+
+  .timeline-spine {
+    position: absolute;
+    left: 40px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--blue) 0%, var(--green-mid) 50%, var(--green-dark) 100%);
+    opacity: 0.22;
+  }
+
+  /* Phase cards */
+  .phase-card {
+    display: flex;
+    gap: 28px;
+    margin-bottom: 24px;
+    position: relative;
+  }
+
+  .phase-marker {
+    flex-shrink: 0;
+    width: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding-top: 22px;
+  }
+
+  .phase-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2.5px solid var(--gray-100);
+    outline: 2px solid currentColor;
+    flex-shrink: 0;
+  }
+
+  .phase-num {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .phase-1 .phase-dot { background: var(--blue); color: var(--blue); }
+  .phase-1 .phase-num { color: var(--blue); }
+  .phase-2 .phase-dot { background: var(--green-mid); color: var(--green-mid); }
+  .phase-2 .phase-num { color: var(--green-mid); }
+  .phase-3 .phase-dot { background: var(--green-dark); color: var(--green-dark); }
+  .phase-3 .phase-num { color: var(--green-dark); }
+
+  .phase-body {
+    flex: 1;
+    background: var(--white);
+    border-radius: 12px;
+    border: 1px solid var(--gray-200);
+    overflow: hidden;
+  }
+
+  .phase-1 .phase-body { border-left: 4px solid var(--blue); }
+  .phase-2 .phase-body { border-left: 4px solid var(--green-mid); }
+  .phase-3 .phase-body { border-left: 4px solid var(--green-dark); }
+
+  .phase-header {
+    padding: 22px 26px 18px;
+    border-bottom: 1px solid var(--gray-200);
+  }
+
+  .phase-title {
+    font-family: 'Lora', Georgia, serif;
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+
+  .phase-1 .phase-title { color: var(--blue-dark); }
+  .phase-2 .phase-title { color: var(--green); }
+  .phase-3 .phase-title { color: var(--green-dark); }
+
+  .phase-subtitle {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 6px;
+  }
+
+  .phase-1 .phase-subtitle { color: var(--blue); }
+  .phase-2 .phase-subtitle { color: var(--green-mid); }
+  .phase-3 .phase-subtitle { color: var(--green-dark); }
+
+  .phase-desc {
+    font-size: 13.5px;
+    color: var(--gray-600);
+    line-height: 1.65;
+    margin-bottom: 14px;
+  }
+
+  /* Data collection chips row */
+  .data-methods { margin-bottom: 0; }
+
+  /* Section grid inside card */
+  .phase-sections {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    border-top: 1px solid var(--gray-200);
+  }
+
+  .phase-section {
+    padding: 18px 20px 20px;
+    border-right: 1px solid var(--gray-200);
+  }
+  .phase-section:last-child { border-right: none; }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .phase-1 .section-label { color: var(--blue); }
+  .phase-2 .section-label { color: var(--green-mid); }
+  .phase-3 .section-label { color: var(--green-dark); }
+
+  .section-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .section-list li {
+    font-size: 12.5px;
+    color: var(--gray-800);
+    line-height: 1.5;
+    padding: 4px 0 4px 14px;
+    position: relative;
+    border-bottom: 1px solid var(--gray-200);
+  }
+
+  .section-list li:last-child { border-bottom: none; }
+
+  .section-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 11px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+  }
+
+  .phase-1 .section-list li::before { background: var(--blue); opacity: 0.5; }
+  .phase-2 .section-list li::before { background: var(--green-mid); opacity: 0.5; }
+  .phase-3 .section-list li::before { background: var(--green-dark); opacity: 0.5; }
+
+  /* Milestone section — full width */
+  .milestone-section {
+    padding: 16px 20px 18px;
+    border-top: 1px solid var(--gray-200);
+    background: var(--gray-100);
+  }
+
+  .milestone-section .section-label {
+    margin-bottom: 8px;
+  }
+
+  .milestone-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .milestone-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    font-size: 12.5px;
+    color: var(--gray-800);
+    line-height: 1.5;
+  }
+
+  .milestone-icon {
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* Output badge */
+  .output-row {
+    padding: 10px 20px 14px;
+    border-top: 1px solid var(--gray-200);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .output-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 4px;
+  }
+
+  .phase-1 .output-badge { background: var(--blue-light); color: var(--blue-dark); border: 1px solid var(--blue-border); }
+  .phase-2 .output-badge { background: var(--green-light); color: var(--green-dark); border: 1px solid var(--green-border); }
+  .phase-3 .output-badge { background: var(--green-dark-light); color: var(--green-dark); border: 1px solid var(--green-dark-border); }
+
+  /* Data collection chips */
+  .chips-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .chip {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 20px;
+    line-height: 1.4;
+  }
+
+  .phase-1 .chip { background: var(--blue-light); color: var(--blue-dark); }
+  .phase-2 .chip { background: var(--green-light); color: var(--green-dark); }
+  .phase-3 .chip { background: var(--green-dark-light); color: var(--green-dark); }
+
+  /* Arrow between phases */
+  .phase-arrow {
+    display: flex;
+    align-items: center;
+    padding-left: 108px;
+    margin-top: -10px;
+    margin-bottom: 4px;
+    height: 30px;
+    gap: 8px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .phase-arrow svg { opacity: 0.35; color: var(--gray-600); }
+
+  .arrow-label {
+    font-size: 11px;
+    color: var(--gray-600);
+    opacity: 0.8;
+    font-style: italic;
+  }
+
+  .footer {
+    margin-top: 36px;
+    padding-top: 18px;
+    border-top: 1px solid var(--gray-200);
+  }
+
+  .footer-org {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--blue-dark);
+  }
+
+  .footer-text {
+    font-size: 12px;
+    color: var(--gray-600);
+    margin-top: 2px;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="project-label">Teacher Time Analysis &amp; Supports</div>
+    <h1>Project Phases: Assess, Plan, and Implement</h1>
+    <p class="subtitle">A structured, three-phase approach to analyzing how teachers allocate their time&mdash;identifying inefficiencies and developing actionable strategies for workload optimization.</p>
+  </div>
+
+  <div class="timeline-wrapper">
+    <div class="timeline-spine"></div>
+
+    <!-- ── PHASE 1 ── -->
+    <div class="phase-card phase-1">
+      <div class="phase-marker">
+        <div class="phase-dot"></div>
+        <div class="phase-num">Phase 1</div>
+      </div>
+      <div class="phase-body">
+
+        <div class="phase-header">
+          <div class="phase-title">Assess Needs</div>
+          <div class="phase-subtitle">Identify where the district is currently at</div>
+          <p class="phase-desc">The district quality team and teacher-researchers collect quantitative and qualitative data to assess district needs. Findings establish the evidence base for all subsequent phases and for performance management.</p>
+          <div class="chips-row">
+            <span class="chip">Teacher time diaries</span>
+            <span class="chip">Teacher focus groups</span>
+            <span class="chip">Teacher &amp; admin survey</span>
+            <span class="chip">Baseline monitoring data</span>
+          </div>
+        </div>
+
+        <div class="phase-sections">
+          <div class="phase-section">
+            <div class="section-label">Strategies &mdash; Training &amp; Coaching Topics</div>
+            <ul class="section-list">
+              <li>Collecting and analyzing focus group data, time audit data, survey, and baseline data</li>
+              <li>Data synthesis, analysis, and sense-making</li>
+              <li>Preparing for the June convening</li>
+              <li>Having tough data conversations</li>
+              <li>Creating a needs assessment</li>
+              <li>Teacher-researchers' evolving role in the project</li>
+            </ul>
+          </div>
+          <div class="phase-section">
+            <div class="section-label">Resources &amp; Tools</div>
+            <ul class="section-list">
+              <li>Focus group data collection guide</li>
+              <li>Time audit data collection guide</li>
+              <li>Survey data collection guide</li>
+              <li>Baseline data collection template</li>
+              <li>Campus synthesis templates</li>
+              <li>District data analysis protocols</li>
+              <li>Needs assessment template</li>
+            </ul>
+          </div>
+          <div class="phase-section">
+            <div class="section-label">Milestones</div>
+            <ul class="section-list">
+              <li>Teacher-researchers synthesize findings into a joint presentation of findings</li>
+              <li>Districts submit a needs assessment using information collected from the case study campuses</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="output-row">
+          <span class="output-badge">
+            <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M3 2h10a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm2 4h6M5 8h6M5 11h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            Output: Needs Assessment
+          </span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Arrow 1→2 -->
+    <div class="phase-arrow">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M8 2v12M3 9l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="arrow-label">Needs assessment informs ideal state planning</span>
+    </div>
+
+    <!-- ── PHASE 2 ── -->
+    <div class="phase-card phase-2">
+      <div class="phase-marker">
+        <div class="phase-dot"></div>
+        <div class="phase-num">Phase 2</div>
+      </div>
+      <div class="phase-body">
+
+        <div class="phase-header">
+          <div class="phase-title">Identify Ideal State &amp; Strategies</div>
+          <div class="phase-subtitle">Identify where you want the district to be and how it can get there</div>
+          <p class="phase-desc">Using the Phase 1 needs assessment and a resource library, the district quality team collaborates to define an ideal state and the strategies needed to reach it.</p>
+        </div>
+
+        <div class="phase-sections">
+          <div class="phase-section">
+            <div class="section-label">Strategies &mdash; Training &amp; Coaching Topics</div>
+            <ul class="section-list">
+              <li>Conducting a root cause analysis</li>
+              <li>Identifying your ideal future state</li>
+              <li>Identifying strategies to close the gap between current and ideal state</li>
+              <li>Developing your theory of action</li>
+            </ul>
+          </div>
+          <div class="phase-section">
+            <div class="section-label">Resources &amp; Tools</div>
+            <ul class="section-list">
+              <li>TTAS resource library</li>
+              <li>Theory of action template</li>
+            </ul>
+          </div>
+          <div class="phase-section">
+            <div class="section-label">Milestones</div>
+            <ul class="section-list">
+              <li>Districts submit a theory of action identifying an ideal state and strategies to move from current state toward the ideal state</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="output-row">
+          <span class="output-badge">
+            <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M3 2h10a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm2 4h6M5 8h6M5 11h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            Output: Theory of Action
+          </span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Arrow 2→3 -->
+    <div class="phase-arrow">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M8 2v12M3 9l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="arrow-label">Theory of action drives implementation planning</span>
+    </div>
+
+    <!-- ── PHASE 3 ── -->
+    <div class="phase-card phase-3">
+      <div class="phase-marker">
+        <div class="phase-dot"></div>
+        <div class="phase-num">Phase 3</div>
+      </div>
+      <div class="phase-body">
+
+        <div class="phase-header">
+          <div class="phase-title">Create an Implementation Plan</div>
+          <div class="phase-subtitle">Create a detailed plan for how the district will reach its ideal state</div>
+          <p class="phase-desc">Using the theory of action developed in Phase 2, the district quality team works together to create a detailed, actionable implementation plan for optimizing teacher time and workload management.</p>
+        </div>
+
+        <div class="phase-sections">
+          <div class="phase-section">
+            <div class="section-label">Strategies &mdash; Training &amp; Coaching Topics</div>
+            <ul class="section-list">
+              <li>Creating an implementation plan</li>
+              <li>Developing a measurement plan</li>
+              <li>Establishing performance management routines</li>
+              <li>Preparing for project launch</li>
+            </ul>
+          </div>
+          <div class="phase-section">
+            <div class="section-label">Resources &amp; Tools</div>
+            <ul class="section-list">
+              <li>Implementation plan template</li>
+            </ul>
+          </div>
+          <div class="phase-section">
+            <div class="section-label">Milestones</div>
+            <ul class="section-list">
+              <li>Districts submit a detailed implementation plan in response to the findings of the needs assessment and theory of action</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="output-row">
+          <span class="output-badge">
+            <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M3 2h10a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm2 4h6M5 8h6M5 11h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            Output: Implementation Plan
+          </span>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- end timeline-wrapper -->
+
+  <div class="footer">
+    <div class="footer-org">Texas Teacher Time Analysis &amp; Supports Project</div>
+    <div class="footer-text">District quality team &bull; Teacher-researchers &bull; Collaborative planning</div>
+  </div>
+
+</div>
+</body>
+</html>
